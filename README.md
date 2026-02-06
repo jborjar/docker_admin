@@ -13,7 +13,7 @@ Stack de herramientas para administracion y monitoreo de contenedores Docker.
 
 ## Arquitectura
 
-![Diagrama de Arquitectura](./docker_admin.png)> **Nota:** Solo Portainer expone puerto al host (9000) para acceso de emergencia.
+![Diagrama de Arquitectura](./images/docker_admin.png)> **Nota:** Solo Portainer expone puerto al host (9000) para acceso de emergencia.
 > Los demas servicios son accesibles unicamente via Nginx Proxy Manager.
 
 ## Requisitos
