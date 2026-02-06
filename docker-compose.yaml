@@ -3,7 +3,10 @@ services:
   # Dockge - Gestor de Stacks Docker Compose
   # =============================================================
   dockge:
-    image: louislam/dockge:latest
+    build:
+      context: ./dockerfiles
+      dockerfile: Dockerfile.dockge
+    image: jbr_dockge
     container_name: dockge
     hostname: dockge
     restart: unless-stopped

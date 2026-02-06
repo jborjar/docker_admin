@@ -76,6 +76,8 @@ http://IP_SERVIDOR:9000
 ```
 docker_admin/
 ├── docker-compose.yaml    # Definicion de servicios
+├── dockerfiles/           # Dockerfiles personalizados
+│   └── Dockerfile.dockge  # Dockge con ping/traceroute
 ├── .env                   # Configuracion (no commitear)
 ├── .env.example           # Plantilla de configuracion
 ├── init.sh                # Script de inicializacion
@@ -88,6 +90,16 @@ docker_admin/
     └── dockmon/
         └── data/
 ```
+
+## Imagenes Personalizadas
+
+### jbr_dockge
+
+Imagen basada en `louislam/dockge:latest` con herramientas de red adicionales:
+- `ping` (iputils-ping)
+- `traceroute`
+
+Las demas imagenes (Dozzle, Portainer, Dockmon) son binarios estaticos sin shell, no permiten agregar paquetes.
 
 ## Configuracion
 

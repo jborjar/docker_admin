@@ -1,0 +1,8 @@
+FROM louislam/dockge:latest
+
+USER root
+RUN apt-get update && apt-get install -y --no-install-recommends \
+    iputils-ping \
+    traceroute \
+    && rm -rf /var/lib/apt/lists/*
+# No volver a USER 1000 - el socket docker requiere root o grupo docker
