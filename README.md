@@ -13,22 +13,7 @@ Stack de herramientas para administracion y monitoreo de contenedores Docker.
 
 ## Arquitectura
 
-```
-                     Nginx Proxy Manager
-                            |
-        +-------------------+-------------------+
-        |         |         |                   |
-     Dockge    Dozzle   Portainer           Dockmon
-     :5001      :8080     :9000              :443
-   (interno)  (interno)  (emergencia)      (interno)
-        |         |         |                   |
-        +-------------------+-------------------+
-                            |
-                    Docker Socket
-                    /var/run/docker.sock
-```
-
-> **Nota:** Solo Portainer expone puerto al host (9000) para acceso de emergencia.
+![Diagrama de Arquitectura](./docker_admin.png)> **Nota:** Solo Portainer expone puerto al host (9000) para acceso de emergencia.
 > Los demas servicios son accesibles unicamente via Nginx Proxy Manager.
 
 ## Requisitos
