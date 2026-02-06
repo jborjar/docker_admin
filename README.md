@@ -116,6 +116,26 @@ docker_admin/
 | `DOCKGE_STACKS_DIR` | Directorio de stacks | /opt/stacks |
 | `DOZZLE_LEVEL` | Nivel de log de Dozzle | info |
 
+### Directorio de Stacks Compartido
+
+Dockge y DockMon comparten el mismo directorio de stacks (`/opt/stacks`) pero con mapeos diferentes debido a sus rutas internas:
+
+| Servicio | Ruta Host | Ruta Interna | Motivo |
+|----------|-----------|--------------|--------|
+| **Dockge** | `/opt/stacks` | `/opt/stacks` | Requiere rutas absolutas iguales |
+| **DockMon** | `/opt/stacks` | `/app/data/stacks` | Ruta fija interna de la aplicacion |
+
+En `docker-compose.yaml`:
+```yaml
+# Dockge - rutas iguales (requisito de la aplicacion)
+volumes:
+  - ${DOCKGE_STACKS_DIR}:${DOCKGE_STACKS_DIR}
+
+# DockMon - mapeo a ruta interna fija
+volumes:
+  - ${DOCKGE_STACKS_DIR}:/app/data/stacks
+```
+
 ## Uso con Nginx Proxy Manager
 
 Ejemplo de configuracion de proxy hosts:
