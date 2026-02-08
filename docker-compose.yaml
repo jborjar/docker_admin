@@ -1,0 +1,112 @@
+services:
+  # =============================================================
+  # Dockge - Gestor de Stacks Docker Compose
+  # =============================================================
+  dockge:
+    build:
+      context: ./dockerfiles
+      dockerfile: Dockerfile.dockge
+    image: jbr_dockge
+    container_name: dockge
+    hostname: dockge
+    restart: unless-stopped
+    environment:
+      - TZ=${TZ}
+      - DOCKGE_STACKS_DIR=${DOCKGE_STACKS_DIR}
+      - DOCKGE_ENABLE_CONSOLE=true
+    # Puertos expuestos solo via NPM (proxy inverso)
+    volumes:
+      - /var/run/docker.sock:/var/run/docker.sock
+      - ${DATA_PATH}/dockge/data:/app/data
+      # Directorio de Stacks - IMPORTANTE: Rutas absolutas iguales
+      - ${DOCKGE_STACKS_DIR}:${DOCKGE_STACKS_DIR}
+    networks:
+      - ${NETWORK_NAME}
+    # Imagen minimalista sin wget/curl - healthcheck deshabilitado
+    deploy:
+      resources:
+        limits:
+          cpus: '0.5'
+          memory: 256M
+
+  # =============================================================
+  # Dozzle - Visor de Logs en Tiempo Real
+  # =============================================================
+  dozzle:
+    image: amir20/dozzle:latest
+    container_name: dozzle
+    hostname: dozzle
+    restart: unless-stopped
+    environment:
+      - TZ=${TZ}
+      - DOZZLE_NO_ANALYTICS=true
+      - DOZZLE_LEVEL=${DOZZLE_LEVEL:-info}
+    volumes:
+      - /var/run/docker.sock:/var/run/docker.sock:ro
+    networks:
+      - ${NETWORK_NAME}
+    # Imagen minimalista sin wget/curl - healthcheck deshabilitado
+    deploy:
+      resources:
+        limits:
+          cpus: '0.25'
+          memory: 128M
+
+  # =============================================================
+  # Portainer CE - Gestion Completa de Docker
+  # =============================================================
+  portainer:
+    image: portainer/portainer-ce:latest
+    container_name: portainer
+    hostname: portainer
+    restart: unless-stopped
+    security_opt:
+      - no-new-privileges:true
+    environment:
+      - TZ=${TZ}
+    ports:
+      - "9000:9000"  # Acceso de emergencia HTTP
+    volumes:
+      - /etc/localtime:/etc/localtime:ro
+      - /var/run/docker.sock:/var/run/docker.sock:ro
+      - ${DATA_PATH}/portainer/data:/data
+    networks:
+      - ${NETWORK_NAME}
+    # Imagen minimalista sin wget/curl - healthcheck deshabilitado
+    deploy:
+      resources:
+        limits:
+          cpus: '0.5'
+          memory: 256M
+
+  # =============================================================
+  # Dockmon - Monitor de Contenedores con Alertas
+  # =============================================================
+  dockmon:
+    image: darthnorse/dockmon:latest
+    container_name: dockmon
+    hostname: dockmon
+    restart: unless-stopped
+    environment:
+      - TZ=${TZ}
+    volumes:
+      - ${DATA_PATH}/dockmon/data:/app/data
+      - ${DOCKGE_STACKS_DIR}:/app/data/stacks
+      - /var/run/docker.sock:/var/run/docker.sock
+    networks:
+      - ${NETWORK_NAME}
+    healthcheck:
+      test: ["CMD", "curl", "-k", "-f", "https://localhost:443/health"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 15s
+    deploy:
+      resources:
+        limits:
+          cpus: '0.5'
+          memory: 256M
+
+networks:
+  vpn-proxy:
+    external: true
